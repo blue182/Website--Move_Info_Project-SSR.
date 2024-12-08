@@ -19,14 +19,168 @@
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.min.js"></script>
+
+    <style>
+      /* ======== HEADER & FOOTER ========== */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .light-mode {
+        background-color: white;
+        color: rgb(44, 10, 10);
+      }
+
+      .dark-mode {
+        background-color: #101112df;
+        color: rgba(245, 188, 188, 0.83);
+      }
+
+      .header {
+        background-color: #f94a5842;
+        padding: 10px;
+        border: 1px solid #dc3545;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 5px;
+      }
+
+      .footer {
+        width: 100%;
+        background-color: #f94a5842;
+        text-align: center;
+        padding: 10px;
+        border: 1px solid #dc3545;
+        border-radius: 5px;
+      }
+
+      .footer.dark-mode {
+        color: #f8f9fa;
+      }
+
+      .mode-toggle-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: auto;
+        gap: 10px;
+        cursor: pointer;
+        margin-right: 10px;
+      }
+
+      .mode-toggle {
+        position: relative;
+        width: 40px;
+        height: 15px;
+        border-radius: 25px;
+        transition: background-color 0.3s ease;
+      }
+
+      .mode-toggle .switch {
+        position: absolute;
+        top: 2px;
+        left: 20px;
+        width: 10px;
+        height: 10px;
+        background-color: rgb(154, 141, 141);
+        border-radius: 50%;
+        transition: left 0.3s ease;
+      }
+
+      .mode-toggle.switch-light {
+        background-color: white;
+      }
+
+      .mode-toggle.switch-light .switch {
+        left: 3px;
+      }
+
+      .mode-toggle.switch-dark {
+        background-color: #3582df;
+        border: 1px solid blue;
+        box-shadow: 0 0 5px #007bff;
+      }
+
+      .mode-toggle.switch-dark .switch {
+        background-color: white;
+        left: 28px;
+      }
+
+      .mode-toggle-container i {
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+      }
+      /* ======== END HEADER & FOOTER ========== */
+      /* ====== NAVBAR ======== */
+      .dark-mode i {
+        color: rgba(255, 255, 255, 0.83);
+      }
+      .dark-mode input {
+        background-color: #10111292;
+        color: #f8f9fa;
+      }
+
+      .dark-mode input.form-control:focus {
+        background-color: #504848 !important;
+        border: 1px solid #007bff;
+        outline: none;
+        color: #f8f9fa;
+      }
+
+      .dark-mode input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .dark-mode .btn-outline-success {
+        border-color: #30d657;
+        color: #2ee759;
+      }
+
+      .dark-mode .btn-outline-success:hover {
+        border-color: #1e7e34;
+      }
+
+      .navbar-brand {
+        transition: transform 0.3s ease;
+      }
+
+      .navbar-brand:hover {
+        transform: scale(1.2);
+      }
+      /* ====== END NAVBAR ======== */
+    </style>
   </head>
   <body>
     <div id="app">
-      <div :class="modeClass">
+      <div id="themeWrapper" class="light-mode">
         <div class="container">
           <!-- Header -->
           <div class="row py-2">
-            <div class="col-12 p-0">22393{+ Header}</div>
+            <div class="col-12 p-0">
+              <div
+                class="header d-flex justify-content-between align-items-center p-3 border border-danger rounded"
+              >
+                <div>&lt;22120393&gt;</div>
+                <h2 class="m-0">Movie Information</h2>
+                <div class="d-flex align-items-center">
+                  <div class="mode-toggle-container">
+                    <!-- Icon Switch for Dark Mode -->
+                    <div class="mode-toggle switch-light">
+                      <div class="switch"></div>
+                    </div>
+                    <i
+                      id="modeIcon"
+                      class="bi bi-moon-fill"
+                      style="font-size: 1.5rem"
+                    ></i>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Navbar -->
@@ -38,12 +192,63 @@
           <div class="row">
             <div class="col-12 p-0">22393{+ Content}</div>
           </div>
+
           <!-- Footer -->
           <div class="row my-2 py-2">
-            <div class="col-12 p-0">22393{+ Footer}</div>
+            <div class="col-12 p-0">
+              <div class="footer text-secondary font-italic py-2 rounded">
+                Copy right &copy; &lt;22120393 - Nguyen Le Thanh Truc&gt;
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Script for Dark Mode -->
+    <script>
+      $(document).ready(function () {
+        const savedTheme = sessionStorage.getItem("theme") || "light";
+        $("#themeWrapper").addClass(savedTheme);
+        if (savedTheme === "dark") {
+          $(".mode-toggle").removeClass("switch-light").addClass("switch-dark");
+          $("#modeIcon").removeClass("bi-moon-fill").addClass("bi-sun-fill");
+          $(".footer").addClass("dark-mode");
+        }
+
+        const changeTheme = (currentTheme) => {
+          if (currentTheme === "light") {
+            $("#themeWrapper").removeClass("light-mode").addClass("dark-mode");
+            $(".mode-toggle")
+              .removeClass("switch-light")
+              .addClass("switch-dark");
+            $("#modeIcon").removeClass("bi-moon-fill").addClass("bi-sun-fill");
+            $(".footer").addClass("dark-mode");
+            localStorage.setItem("theme", "dark");
+          } else {
+            $("#themeWrapper").removeClass("dark-mode").addClass("light-mode");
+            $(".mode-toggle")
+              .removeClass("switch-dark")
+              .addClass("switch-light");
+            $("#modeIcon").removeClass("bi-sun-fill").addClass("bi-moon-fill");
+            $(".footer").removeClass("dark-mode");
+            sessionStorage.setItem("theme", "light");
+          }
+        };
+
+        $(".mode-toggle").on("click", function () {
+          const currentTheme = $("#themeWrapper").hasClass("dark-mode")
+            ? "dark"
+            : "light";
+          changeTheme(currentTheme);
+        });
+        $("#modeIcon").on("click", function () {
+          const currentTheme = $("#themeWrapper").hasClass("dark-mode")
+            ? "dark"
+            : "light";
+          changeTheme(currentTheme);
+        });
+      });
+    </script>
   </body>
 </html>

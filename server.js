@@ -14,48 +14,16 @@ app.use((req, res, next) => {
   next();
 });
 
-const template = `
-22393{if user.isLoggedIn}
-Welcome back, 22393{user.name}!
-{else}
-Please log in to continue.
-{/if}
-
-22393{for item in items}
-- 22393{item.name} (22393{item.quantity})
-{/for}
-`;
-
-const data = {
-  user: { isLoggedIn: true, name: "John Doe" },
-  items: [
-    { name: "Apple", quantity: 3 },
-    { name: "Banana", quantity: 5 },
-    { name: "Orange", quantity: 2 },
-  ],
-};
-
-const partials = {};
-
-const engine = new TemplateEngine(path.join(__dirname, "views"));
-const output = engine.parseTemplate(template, data, partials);
-console.log("OUTPUT: ", output);
-
 app.get("/", (req, res) => {
   const data = {};
 
-  // Nạp layout và partials
   const layout = templateEngine.loadTemplate("layouts/main.html");
   const partials = {
-    Header: templateEngine.loadTemplate("partials/header.html"),
     Navbar: templateEngine.loadTemplate("partials/navbar.html"),
-    Footer: templateEngine.loadTemplate("partials/footer.html"),
   };
 
-  // Render template
   const html = templateEngine.parseTemplate(layout, data, partials);
 
-  // Trả về HTML
   res.send(html);
 });
 
