@@ -21,7 +21,7 @@ class TemplateEngine {
 
     // Replace partials
     template = template.replace(
-      /22393{\+\s*([^}\s]+)\s*}/g,
+      /22393{\+ ([^}\s]+)}/g,
       (_, partialName) => partials[partialName] || ""
     );
 
@@ -29,9 +29,13 @@ class TemplateEngine {
     template = template.replace(
       /22393{for ([a-zA-Z_$][\w]*) in ([a-zA-Z_$][\w.]*)}([\s\S]*?){\/for}/g,
       (_, item, arrayName, content) => {
-        const array = this.getValueFromData(arrayName, data) || [];
-        if (!Array.isArray(array)) return "";
+        let array = this.getValueFromData(arrayName, data);
 
+        if (typeof array === "number") {
+          array = Array.from({ length: array }, (_, i) => i);
+        } else if (!Array.isArray(array)) {
+          return "";
+        }
         return array
           .map((element) =>
             this.parseTemplate(content, { ...data, [item]: element }, partials)
@@ -47,14 +51,6 @@ class TemplateEngine {
         return this.evaluateCondition(condition, data)
           ? trueContent
           : falseContent || "";
-      }
-    );
-
-    // Handle standalone if conditions
-    template = template.replace(
-      /22393{if ([^\}]+)}([\s\S]*?){\/if}/gs,
-      (_, condition, trueContent) => {
-        return this.evaluateCondition(condition, data) ? trueContent : "";
       }
     );
 
@@ -76,7 +72,12 @@ class TemplateEngine {
   }
 
   getValueFromData(variable, data) {
-    return variable.split(".").reduce((obj, key) => obj && obj[key], data);
+    try {
+      return new Function("data", `return data.${variable};`)(data);
+    } catch (err) {
+      console.error(`Error accessing variable: "${variable}"`, err);
+      return undefined;
+    }
   }
 
   evaluateCondition(condition, data) {
@@ -97,8 +98,6 @@ class TemplateEngine {
         return value !== undefined ? value : `"${match}"`;
       }
     );
-
-    console.log("Sanitized Expression:", sanitizedExpression);
 
     try {
       return new Function("data", `return ${sanitizedExpression};`)(data);

@@ -14,18 +14,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/", (req, res) => {
-  const data = {};
-
-  const layout = templateEngine.loadTemplate("layouts/main.html");
-  const partials = {
-    Navbar: templateEngine.loadTemplate("partials/navbar.html"),
-  };
-
-  const html = templateEngine.parseTemplate(layout, data, partials);
-
-  res.send(html);
-});
+app.use("/", require("./routes/index.r"));
 
 app.use((req, res, next) => {
   const error = new MyError(
