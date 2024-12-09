@@ -34,7 +34,6 @@ const parseNamesToString = (list) => {
 module.exports = {
   getHome: async (req, res, next) => {
     try {
-      console.log("GET HOME");
       const topFiveRatingMovies = await movieM.getTopRatedMovies();
       const topMoviesWithIndex = topFiveRatingMovies.map((movie, index) => ({
         ...movie,
@@ -52,6 +51,17 @@ module.exports = {
       );
       const htmlContent1 = templateEngine.parseTemplate(layoutContent1, data1);
 
+      const topFAVMovie = await movieM.getTopRatedFavoriteMovies();
+      const groupedMoviesFAV = groupMoviesByIndex(topFAVMovie);
+      const data2 = {
+        groupedMovies: groupedMoviesFAV,
+        uniqueId: "carousel-" + Date.now(),
+      };
+      const layoutContent2 = templateEngine.loadTemplate(
+        "partials/slideMovie.html"
+      );
+      const htmlContent2 = templateEngine.parseTemplate(layoutContent2, data2);
+
       const data = {
         topFiveRatingMovies: topMoviesWithIndex,
         topFiveRatingMoviesLength: topFiveRatingMovies.length,
@@ -60,6 +70,7 @@ module.exports = {
       const partialsContent = {
         slidePoster: templateEngine.loadTemplate("partials/slidePoster.html"),
         slideMovie: htmlContent1,
+        slideFAVMovie: htmlContent2,
       };
 
       const htmlContent = templateEngine.parseTemplate(

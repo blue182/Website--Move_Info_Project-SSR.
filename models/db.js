@@ -221,7 +221,6 @@ module.exports = (schema) => {
     searchMovies: async (keyword, page = 1, limit = 10) => {
       const offset = (page - 1) * limit;
 
-      // Truy vấn danh sách phim
       const movieQuery = `
         SELECT 
             m.id AS movie_id,
@@ -239,8 +238,6 @@ module.exports = (schema) => {
             m.title
         LIMIT $2 OFFSET $3;
       `;
-
-      // Truy vấn đếm tổng số phim
       const countQuery = `
         SELECT COUNT(*) AS count
         FROM s22393."movies" m
