@@ -1,5 +1,3 @@
-const { search } = require("../routes/index.r");
-
 const schema = process.env.DB_SCHEMA || "public";
 const db = require("./db")(schema);
 const tbName = "movies";
@@ -73,6 +71,14 @@ module.exports = {
   getMovieDetails: async (id) => {
     try {
       const data = await db.getMovieDetails(id);
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  searchMovies: async (keyword, page = 1, limit = 10) => {
+    try {
+      const data = await db.searchMovies(keyword, page, limit);
       return data;
     } catch (error) {
       throw error;

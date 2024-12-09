@@ -2,31 +2,20 @@
   <!-- Indicators -->
   <div class="carousel-indicators">
     22393{for movie in topFiveRatingMovies}
-    <button
-      type="button"
-      data-bs-target="#movieCarousel"
+    <button type="button" data-bs-target="#movieCarousel"
       data-bs-slide-to="22393{if movie.index === 0}0{else}22393{movie.index}{/if}"
-      class="22393{if movie.index === 0}active{else}{/if}"
-      aria-current="22393{if movie.index === 0}true{else}{/if}"
-      aria-label="Slide 22393{movie.index + 1}"
-    ></button>
+      class="22393{if movie.index === 0}active{else}{/if}" aria-current="22393{if movie.index === 0}true{else}{/if}"
+      aria-label="Slide 22393{movie.index + 1}"></button>
     {/for}
   </div>
 
   <div class="carousel-inner largeSlide">
     22393{for movie in topFiveRatingMovies}
-    <div class="carousel-item 22393{if movie.index === 0}active{else}{/if}">
+    <a class="carousel-item 22393{if movie.index === 0}active{else}{/if}" href="/movie/22393{movie.movie_id}">
       <div class="inner-image">
-        <img
-          src="22393{movie.movie_image}"
-          class="d-block w-100 h-100"
-          alt="22393{movie.movie_title}"
-        />
+        <img src="22393{movie.movie_image}" class="d-block w-100 h-100" alt="22393{movie.movie_title}" />
       </div>
-      <div
-        class="carousel-caption d-none d-md-block"
-        style="background-color: rgba(0, 0, 0, 0.767); padding: 0px"
-      >
+      <div class="carousel-caption d-none d-md-block" style="background-color: rgba(0, 0, 0, 0.767); padding: 0px">
         <div style="font-size: 1.2rem; color: rgb(251, 206, 28)">
           22393{movie.movie_title}
         </div>
@@ -35,24 +24,14 @@
           <div>Rating: 22393{movie.rating}</div>
         </div>
       </div>
-    </div>
+    </a>
     {/for}
   </div>
-  <button
-    class="carousel-control-prev"
-    type="button"
-    data-bs-target="#movieCarousel"
-    data-bs-slide="prev"
-  >
+  <button class="carousel-control-prev" type="button" data-bs-target="#movieCarousel" data-bs-slide="prev">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
     <span class="visually-hidden">Previous</span>
   </button>
-  <button
-    class="carousel-control-next"
-    type="button"
-    data-bs-target="#movieCarousel"
-    data-bs-slide="next"
-  >
+  <button class="carousel-control-next" type="button" data-bs-target="#movieCarousel" data-bs-slide="next">
     <span class="carousel-control-next-icon" aria-hidden="true"></span>
     <span class="visually-hidden">Next</span>
   </button>

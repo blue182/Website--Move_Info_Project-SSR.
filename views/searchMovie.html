@@ -1,0 +1,71 @@
+<div class="col-12 p-2">
+    <h5>List of movies found by movie title</h5>
+</div>
+<div class="movie-list-container mt-2 col-12">
+    <!-- Movie list -->
+    <div class="row row-cols-1 row-cols-md-4 g-5">
+        22393{for movie in movies}
+        <a key="22393{movie.movie_id}" href="/movie/22393{movie.movie_id}" class="col-12 col-md-3">
+            <div class="movie-card h-100">
+                <div class="movie-poster-container">
+                    <div class="poster-wrapper">
+                        <img src="22393{movie.movie_image}" alt="Movie Poster" class="movie-poster" />
+                    </div>
+                    <div class="movie-info">
+                        <h5 class="movie-title">22393{movie.movie_title}</h5>
+                        <p style="color: #b6b0b0; text-align: center;  width: 100%;"><strong>Genre:</strong></p>
+                        <p><strong>Rated:</strong> 22393{movie.rating}</p>
+                        <p><strong>Length:</strong> 22393{movie.movie_runtime}</p>
+                        <p><strong>Language:</strong> 22393{movie.movie_language}</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {/for}
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-controls d-flex align-items-center justify-content-center mt-4">
+        <ul class="pagination" id="pagination">
+            <!-- Placeholder for Pagination Links -->
+        </ul>
+    </div>
+</div>
+
+<script>
+    const page = parseInt("22393{page}");
+    const total_pages = parseInt("22393{total_pages}");
+    const limit = parseInt("22393{limit}");
+    const keyword = "22393{keyword}";
+
+    function createPagination() {
+        const paginationElement = document.getElementById("pagination");
+
+        let prevDisabled = page === 1 ? "disabled" : "";
+        let prevPageLink = `<li class="page-item ${prevDisabled}">
+            <a class="page-link" href="?keyword=${keyword}&page=${page - 1}&limit=${limit}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>`;
+
+        paginationElement.innerHTML += prevPageLink;
+
+        for (let i = 1; i <= total_pages; i++) {
+            let activeClass = i === page ? "active" : "";
+            paginationElement.innerHTML += `<li class="page-item ${activeClass}">
+                <a class="page-link" href="?keyword=${keyword}&page=${i}&limit=${limit}">${i}</a>
+            </li>`;
+        }
+
+        let nextDisabled = page === total_pages ? "disabled" : "";
+        let nextPageLink = `<li class="page-item ${nextDisabled}">
+            <a class="page-link" href="?keyword=${keyword}&page=${page + 1}&limit=${limit}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>`;
+
+        paginationElement.innerHTML += nextPageLink;
+    }
+
+    createPagination();
+</script>

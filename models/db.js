@@ -218,5 +218,86 @@ module.exports = (schema) => {
         throw err;
       }
     },
+    searchMovies: async (keyword, page = 1, limit = 10) => {
+      const offset = (page - 1) * limit;
+
+      // Truy vấn danh sách phim
+      const movieQuery = `
+        SELECT 
+            m.id AS movie_id,
+            m.title AS movie_title,
+            m.genres AS movie_genre,
+            m.runtime_str AS movie_runtime,
+            m.languages AS movie_language,
+            m.image AS movie_image,
+            m.filmaffinity_rating AS rating
+        FROM 
+            s22393."movies" m
+        WHERE 
+            LOWER(m.title) LIKE LOWER($1)
+        ORDER BY 
+            m.title
+        LIMIT $2 OFFSET $3;
+      `;
+
+      // Truy vấn đếm tổng số phim
+      const countQuery = `
+        SELECT COUNT(*) AS count
+        FROM s22393."movies" m
+        WHERE LOWER(m.title) LIKE LOWER($1);
+      `;
+
+      try {
+        const { movies, totalCount } = await db.tx(async (t) => {
+          const movies = await t.any(movieQuery, [
+            `%${keyword}%`,
+            limit,
+            offset,
+          ]);
+          const { count: totalCount } = await t.one(countQuery, [
+            `%${keyword}%`,
+          ]);
+          return { movies, totalCount };
+        });
+
+        return { movies, totalCount };
+      } catch (err) {
+        console.error("Error searching movies:", err);
+        throw err;
+      }
+    },
+
+    searchActors: async (name, page = 1, limit = 10) => {
+      const offset = (page - 1) * limit;
+      const sql = `
+        SELECT 
+            p.id AS actor_id,
+            p.name AS actor_name,
+            p.image AS actor_image,
+            p.role AS actor_role
+        FROM 
+            s22393."persons" p
+        WHERE 
+            LOWER(p.name) LIKE LOWER($1)
+        ORDER BY 
+            p.name
+        LIMIT $2 OFFSET $3;
+        SELECT COUNT(*) 
+        FROM s22393."persons" p
+        WHERE LOWER(p.name) LIKE LOWER($1);
+      `;
+      try {
+        const [actors, totalCount] = await db.tx(async (t) => {
+          const actorData = await t.any(sql, [`%${name}%`, limit, offset]);
+          const countData = await t.one(sql.split("LIMIT")[1], [`%${name}%`]);
+          return [actorData, countData.count];
+        });
+
+        return { actors, totalCount };
+      } catch (err) {
+        console.error("Error searching actors:", err);
+        throw err;
+      }
+    },
   };
 };

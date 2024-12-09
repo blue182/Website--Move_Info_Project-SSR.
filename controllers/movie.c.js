@@ -86,8 +86,6 @@ module.exports = {
     try {
       const { id } = req.params;
       const movie = await movieM.getMovieDetails(id);
-      console.log("Movie: ", movie);
-
       if (!movie) {
         return next(
           new MyError(404, "Movie Not Found", "The movie does not exist.")
@@ -100,7 +98,6 @@ module.exports = {
         .map((actor) => `<a href="/actor/${actor.id}">${actor.name}</a>`)
         .join(", ");
 
-      console.log("Actors: ", actorsString);
       const data = {
         movie,
         directorsString,
@@ -111,6 +108,30 @@ module.exports = {
       const partials = {
         Navbar: templateEngine.loadTemplate("partials/navbar.html"),
         Content: templateEngine.loadTemplate("movieDetail.html"),
+      };
+      const html = templateEngine.parseTemplate(layout, data, partials);
+      res.send(html);
+    } catch (error) {
+      return next(new MyError(500, error.message, error.stack));
+    }
+  },
+  searchMovies: async (req, res, next) => {
+    try {
+      console.log("Search Movies");
+      const { keyword, page, limit } = req.query;
+      const movies = await movieM.searchMovies(keyword, page, limit);
+      const total_pages = Math.ceil(movies.totalCount / limit);
+      const data = {
+        movies: movies.movies,
+        page: page,
+        limit: parseInt(limit),
+        total_pages,
+        keyword,
+      };
+      const layout = templateEngine.loadTemplate("layouts/main.html");
+      const partials = {
+        Navbar: templateEngine.loadTemplate("partials/navbar.html"),
+        Content: templateEngine.loadTemplate("searchMovie.html"),
       };
       const html = templateEngine.parseTemplate(layout, data, partials);
       res.send(html);
