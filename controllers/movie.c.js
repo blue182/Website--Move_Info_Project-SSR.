@@ -128,7 +128,6 @@ module.exports = {
   },
   searchMovies: async (req, res, next) => {
     try {
-      console.log("Search Movies");
       const { keyword, page, limit } = req.query;
       const movies = await movieM.searchMovies(keyword, page, limit);
       const total_pages = Math.ceil(movies.totalCount / limit);

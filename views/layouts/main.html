@@ -23,6 +23,7 @@
     .container {
       max-width: 1200px;
       margin: 0 auto;
+      min-height: 100vh;
     }
 
     .light-mode {
@@ -363,7 +364,6 @@
               <h2 class="m-0">Movie Information</h2>
               <div class="d-flex align-items-center">
                 <div class="mode-toggle-container">
-                  <!-- Icon Switch for Dark Mode -->
                   <div class="mode-toggle switch-light">
                     <div class="switch"></div>
                   </div>
@@ -399,11 +399,13 @@
   <!-- Script for Dark Mode -->
   <script>
     $(document).ready(function () {
-      const savedTheme = sessionStorage.getItem("theme") || "light";
+      const savedTheme = localStorage.getItem("theme") || "light";
       $("#themeWrapper").addClass(savedTheme);
       if (savedTheme === "dark") {
+        console.log("dark");
+        $("#themeWrapper").removeClass("light-mode").addClass("dark-mode");
         $(".mode-toggle").removeClass("switch-light").addClass("switch-dark");
-        $("#modeIcon").removeClass("bi-sun-fill").addClass("bi-sun-fill");
+        $("#modeIcon").removeClass("bi-sun-fill").addClass("bi-moon-fill");
         $(".footer").addClass("dark-mode");
       }
 
@@ -424,7 +426,7 @@
           $("#modeIcon").removeClass("bi-moon-fill").addClass("bi-sun-fill");
 
           $(".footer").removeClass("dark-mode");
-          sessionStorage.setItem("theme", "light");
+          localStorage.setItem("theme", "light");
         }
       };
 

@@ -10,7 +10,7 @@ class TemplateEngine {
     const fullPath = path.resolve(this.basePath, templatePath);
     try {
       const template = fs.readFileSync(fullPath, "utf-8");
-      return template.replace(/\r\n|\n/g, ""); // Clean line breaks
+      return template.replace(/\r\n|\n/g, "");
     } catch (err) {
       throw new Error(`Error loading template: ${fullPath}\n${err.message}`);
     }

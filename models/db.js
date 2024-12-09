@@ -147,7 +147,6 @@ module.exports = (schema) => {
 
         return { movies, total, totalPages: Math.ceil(total / limit) };
       } catch (err) {
-        console.error("Error fetching favorite movies:", err);
         throw err;
       }
     },
@@ -174,7 +173,6 @@ module.exports = (schema) => {
         const data = await db.any(sql, [limit]);
         return data;
       } catch (err) {
-        console.error("Error fetching top-grossing movies:", err);
         throw err;
       }
     },
@@ -201,7 +199,6 @@ module.exports = (schema) => {
         const data = await db.any(sql, [limit]);
         return data;
       } catch (err) {
-        console.error("Error fetching top-rated movies:", err);
         throw err;
       }
     },
@@ -230,7 +227,6 @@ module.exports = (schema) => {
         const data = await db.any(sql, [limit]);
         return data;
       } catch (err) {
-        console.error("Error fetching top-rated favorite movies:", err);
         throw err;
       }
     },
@@ -340,7 +336,6 @@ module.exports = (schema) => {
       }
     },
     addFavMovie: async (movieId) => {
-      console.log("Adding DB movie to favorites:", movieId);
       const checkMovieSql = `
         SELECT 1 FROM s22393."movies" WHERE id = $1;
       `;
@@ -365,6 +360,30 @@ module.exports = (schema) => {
         }
       } catch (err) {
         throw err;
+      }
+    },
+    listMovieOfActor: async (actorId) => {
+      const sql = `
+          SELECT 
+              m.id AS movie_id,
+              m.title AS movie_title,
+              m.genres AS movie_genre,
+              m.runtime_str AS movie_runtime,
+              m.image AS movie_image,
+              m.filmaffinity_rating AS movie_rating
+          FROM 
+              s22393."actors" a
+          JOIN 
+              s22393."movies" m ON a.movie_id = m.id
+          WHERE 
+              a.person_id = $1;  -- Lọc theo person_id của diễn viên
+        `;
+
+      try {
+        const movies = await db.any(sql, [actorId]);
+        return movies;
+      } catch (error) {
+        throw error;
       }
     },
   };

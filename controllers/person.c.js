@@ -1,5 +1,6 @@
 const MyError = require("../cerror");
 const personM = require("../models/person.m");
+const movieM = require("../models/movie.m");
 const path = require("path");
 const TemplateEngine = require("../22393");
 const templateEngine = new TemplateEngine(path.join(__dirname, "../views"));
@@ -14,9 +15,18 @@ module.exports = {
           new MyError(404, "Actor Not Found", "No has information about actor.")
         );
       }
+      const movies = await movieM.listMovieOfActor(id);
+      const data1 = {
+        movies: movies,
+      };
+      const layout1 = templateEngine.loadTemplate(
+        "partials/listMovieOfActor.html"
+      );
+      const html1 = templateEngine.parseTemplate(layout1, data1);
 
       const data = {
         actor: actor,
+        listMovieOfActor: html1,
       };
       const layout = templateEngine.loadTemplate("layouts/main.html");
       const partials = {
