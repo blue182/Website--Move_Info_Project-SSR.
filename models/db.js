@@ -269,7 +269,8 @@ module.exports = (schema) => {
 
     searchActors: async (name, page = 1, limit = 10) => {
       const offset = (page - 1) * limit;
-      const sql = `
+
+      const actorQuery = `
         SELECT 
             p.id AS actor_id,
             p.name AS actor_name,
@@ -279,18 +280,26 @@ module.exports = (schema) => {
             s22393."persons" p
         WHERE 
             LOWER(p.name) LIKE LOWER($1)
-        ORDER BY 
-            p.name
+            AND LOWER(p.role) LIKE LOWER('%actor%')
         LIMIT $2 OFFSET $3;
+    `;
+
+      const countQuery = `
         SELECT COUNT(*) 
         FROM s22393."persons" p
-        WHERE LOWER(p.name) LIKE LOWER($1);
+        WHERE LOWER(p.name) LIKE LOWER($1)
+        AND LOWER(p.role) LIKE '%actor%';
       `;
+
       try {
         const [actors, totalCount] = await db.tx(async (t) => {
-          const actorData = await t.any(sql, [`%${name}%`, limit, offset]);
-          const countData = await t.one(sql.split("LIMIT")[1], [`%${name}%`]);
-          return [actorData, countData.count];
+          const actorData = await t.any(actorQuery, [
+            `%${name}%`,
+            limit,
+            offset,
+          ]);
+          const countData = await t.one(countQuery, [`%${name}%`]);
+          return [actorData, parseInt(countData.count, 10)];
         });
 
         return { actors, totalCount };

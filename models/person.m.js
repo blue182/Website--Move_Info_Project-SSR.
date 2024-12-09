@@ -20,4 +20,12 @@ module.exports = {
       throw error;
     }
   },
+  searchActors: async (keyword, page, limit) => {
+    try {
+      const data = await db.searchActors(keyword, page, limit);
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

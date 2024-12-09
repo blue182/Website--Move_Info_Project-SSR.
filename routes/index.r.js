@@ -16,9 +16,12 @@ router.post("/search", (req, res) => {
     );
   } else if (searchType === "actor") {
     console.log("actor");
-    //res.redirect(`/search/actor?keyword=${encodeURIComponent(keyword)}`);
+    res.redirect(
+      `/search/actor?keyword=${encodeURIComponent(keyword)}&page=1&limit=8`
+    );
   }
 });
 router.get("/search/movie", movieC.searchMovies);
+router.get("/search/actor", personC.searchActors);
 
 module.exports = router;
