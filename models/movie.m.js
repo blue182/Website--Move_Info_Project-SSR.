@@ -20,10 +20,12 @@ module.exports = {
       throw error;
     }
   },
-  add: async (movie) => {
+  addFavMovie: async (movie) => {
     try {
-      const movieId = await db.add(tbName, movie);
-      return movieId;
+      console.log("Model movie: ", movie);
+      const result = await db.addFavMovie(movie);
+      console.log("Model result: ", result);
+      return result;
     } catch (error) {
       throw error;
     }
@@ -31,6 +33,14 @@ module.exports = {
   delete: async (id) => {
     try {
       const result = await db.delete(tbName, idField, id);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  deleteFavMovie: async (id) => {
+    try {
+      const result = await db.deleteFavMovie(id);
       return result;
     } catch (error) {
       throw error;
@@ -79,6 +89,14 @@ module.exports = {
   searchMovies: async (keyword, page = 1, limit = 10) => {
     try {
       const data = await db.searchMovies(keyword, page, limit);
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getFavMovies: async (page = 1, limit = 10) => {
+    try {
+      const data = await db.getFavoriteMovies(page, limit);
       return data;
     } catch (error) {
       throw error;

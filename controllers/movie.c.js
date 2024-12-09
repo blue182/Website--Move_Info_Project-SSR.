@@ -150,4 +150,45 @@ module.exports = {
       return next(new MyError(500, error.message, error.stack));
     }
   },
+  getFavMovies: async (req, res, next) => {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 5;
+
+      const movies = await movieM.getFavMovies(page, limit);
+      const data = {
+        movies: movies.movies,
+        page,
+        limit,
+        total_pages: movies.totalPages,
+      };
+      const layout = templateEngine.loadTemplate("layouts/main.html");
+      const partials = {
+        Navbar: templateEngine.loadTemplate("partials/navbar.html"),
+        Content: templateEngine.loadTemplate("listfavmovie.html"),
+      };
+      const html = templateEngine.parseTemplate(layout, data, partials);
+      res.send(html);
+    } catch (error) {
+      return next(new MyError(500, error.message, error.stack));
+    }
+  },
+  deleteFavMovie: async (req, res, next) => {
+    try {
+      const { movie_id } = req.body;
+      await movieM.deleteFavMovie(movie_id);
+      res.redirect("/favorite-movies");
+    } catch (error) {
+      return next(new MyError(500, error.message, error.stack));
+    }
+  },
+  addFavMovie: async (req, res, next) => {
+    try {
+      const { movie_id } = req.body;
+      const result = await movieM.addFavMovie(movie_id);
+      res.redirect("/movie/" + movie_id);
+    } catch (error) {
+      return next(new MyError(500, error.message, error.stack));
+    }
+  },
 };

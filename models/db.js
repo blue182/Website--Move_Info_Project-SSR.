@@ -54,18 +54,21 @@ module.exports = (schema) => {
       }
     },
     delete: async (tbName, idField, id) => {
-      try {
-        console.log(tbName, idField, id);
-        const table = new pgp.helpers.TableName({
-          table: tbName,
-          schema: this.schema,
-        });
+      console.log(`Deleting from table: ${tbName}, where ${idField} = ${id}`);
 
-        const sql = pgp.helpers.delete({ [idField]: id }, null, table);
-        console.log("SQL: ", sql);
-        const result = await db.oneOrNone(sql);
+      try {
+        console.log(`Deleting from table: ${tbName}, where ${idField} = ${id}`);
+        const sql = `DELETE FROM ${tbName} WHERE ${idField} = $1 RETURNING *`;
+        const result = await db.oneOrNone(sql, [id]);
+        if (!result) {
+          console.log("No record found to delete.");
+          return null;
+        }
+
+        console.log(`Deleted row: `, result);
         return result;
       } catch (error) {
+        console.error("Error during delete operation:", error);
         throw error;
       }
     },
@@ -111,25 +114,38 @@ module.exports = (schema) => {
       }
     },
 
-    getFavoriteMovies: async () => {
+    getFavoriteMovies: async (page = 1, limit = 10) => {
+      const offset = (page - 1) * limit;
       const sql = `
           SELECT 
               m.id AS movie_id,
               m.title AS movie_title,
               m.runtime_str AS movie_runtime,
+              m.genres AS movie_genre,
               m.image AS movie_image,
               m.filmaffinity_rating AS rating
           FROM 
               s22393."favorite_movies" fm
           JOIN s22393."movies" m ON fm.movie_id = m.id
-          WHERE 
-              fm.user_id = $1
           GROUP BY 
-              m.id;
-        `;
+              m.id
+          ORDER BY 
+              m.title ASC
+          LIMIT $1 OFFSET $2;
+      `;
+      const countSql = `
+          SELECT COUNT(*) AS total
+          FROM 
+              s22393."favorite_movies" fm;
+      `;
       try {
-        const data = await db.any(sql, [userId]);
-        return data;
+        const [movies, total] = await db.tx(async (t) => {
+          const movieData = await t.any(sql, [limit, offset]);
+          const totalData = await t.one(countSql);
+          return [movieData, parseInt(totalData.total, 10)];
+        });
+
+        return { movies, total, totalPages: Math.ceil(total / limit) };
       } catch (err) {
         console.error("Error fetching favorite movies:", err);
         throw err;
@@ -190,7 +206,7 @@ module.exports = (schema) => {
       }
     },
 
-    getTopRatedFavoriteMovies: async (limit = 23) => {
+    getTopRatedFavoriteMovies: async (limit = 17) => {
       const sql = `
             SELECT 
                 m.id AS movie_id,
@@ -302,6 +318,52 @@ module.exports = (schema) => {
         return { actors, totalCount };
       } catch (err) {
         console.error("Error searching actors:", err);
+        throw err;
+      }
+    },
+    deleteFavMovie: async (movieId) => {
+      const sql = `
+        DELETE FROM s22393."favorite_movies" 
+        WHERE movie_id = $1 
+        RETURNING *;  -- Trả về bản ghi bị xóa (tuỳ chọn, giúp kiểm tra nếu cần)
+      `;
+
+      try {
+        const result = await db.oneOrNone(sql, [movieId]);
+        if (result) {
+          return result;
+        } else {
+          return null;
+        }
+      } catch (err) {
+        throw err;
+      }
+    },
+    addFavMovie: async (movieId) => {
+      console.log("Adding DB movie to favorites:", movieId);
+      const checkMovieSql = `
+        SELECT 1 FROM s22393."movies" WHERE id = $1;
+      `;
+
+      try {
+        const movieExists = await db.oneOrNone(checkMovieSql, [movieId]);
+
+        if (!movieExists) {
+          return { success: false, message: "Movie does not exist" };
+        }
+        const sql = `
+          INSERT INTO s22393."favorite_movies" (movie_id)
+          VALUES ($1)
+          ON CONFLICT (movie_id) DO NOTHING;
+        `;
+
+        const result = await db.oneOrNone(sql, [movieId]);
+        if (result === null) {
+          return { success: false, message: "Movie already in favorites" };
+        } else {
+          return { success: true, message: "Movie added to favorites" };
+        }
+      } catch (err) {
         throw err;
       }
     },

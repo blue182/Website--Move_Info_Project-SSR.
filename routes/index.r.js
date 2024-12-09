@@ -23,5 +23,8 @@ router.post("/search", (req, res) => {
 });
 router.get("/search/movie", movieC.searchMovies);
 router.get("/search/actor", personC.searchActors);
+router.get("/favorite-movies", movieC.getFavMovies);
+router.post("/favorite-movies/delete", movieC.deleteFavMovie);
+router.post("/favorite-movies/add", movieC.addFavMovie);
 
 module.exports = router;
