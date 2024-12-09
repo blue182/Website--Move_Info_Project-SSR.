@@ -12,9 +12,9 @@ module.exports = {
       throw error;
     }
   },
-  one: async (id) => {
+  getActorDetail: async (id) => {
     try {
-      const data = await db.getMovieDetails(id);
+      const data = await db.one(tbName, idField, id);
       return data;
     } catch (error) {
       throw error;

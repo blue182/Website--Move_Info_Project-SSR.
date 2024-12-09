@@ -72,18 +72,21 @@ module.exports = (schema) => {
     getMovieDetails: async (movieId) => {
       const sql = `
           SELECT 
-              m.id AS movie_id,
-              m.title AS movie_title,
-              m.year AS release_year,
-              m.plot AS movie_plot,
-              JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('id', g.id, 'key', g.key, 'value', g.value)) AS genres,
-              JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('id', a.id, 'name', a.name, 'role', 'actor', 'as_character', ac.as_character)) AS actors,
-              JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('id', d.id, 'name', d.name, 'role', 'director')) AS directors,
-              JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('id', w.id, 'name', w.name, 'role', 'writer')) AS writers
+              m.*,
+              COALESCE(
+                  JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('id', a.id, 'name', a.name, 'role', 'actor', 'as_character', ac.as_character))
+                  FILTER (WHERE a.id IS NOT NULL), '[]'
+              ) AS actors,
+              COALESCE(
+                  JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('id', d.id, 'name', d.name, 'role', 'director'))
+                  FILTER (WHERE d.id IS NOT NULL), '[]'
+              ) AS directors,
+              COALESCE(
+                  JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('id', w.id, 'name', w.name, 'role', 'writer'))
+                  FILTER (WHERE w.id IS NOT NULL), '[]'
+              ) AS writers
           FROM 
               s22393."movies" m
-          LEFT JOIN s22393."movie_genres" mg ON m.id = mg.movie_id
-          LEFT JOIN s22393."genres" g ON mg.genre_id = g.id
           LEFT JOIN s22393."actors" ac ON m.id = ac.movie_id
           LEFT JOIN s22393."persons" a ON ac.person_id = a.id
           LEFT JOIN s22393."directors" dir ON m.id = dir.movie_id
@@ -94,9 +97,13 @@ module.exports = (schema) => {
               m.id = $1
           GROUP BY 
               m.id;
-        `;
+      `;
       try {
-        const data = await db.one(sql, [movieId]);
+        const data = await db.oneOrNone(sql, [movieId]);
+        if (!data) {
+          console.error("No movie found with the given ID.");
+          return null;
+        }
         return data;
       } catch (err) {
         console.error("Error fetching movie details:", err);

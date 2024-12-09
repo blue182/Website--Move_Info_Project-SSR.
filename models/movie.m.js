@@ -1,3 +1,5 @@
+const { search } = require("../routes/index.r");
+
 const schema = process.env.DB_SCHEMA || "public";
 const db = require("./db")(schema);
 const tbName = "movies";
@@ -63,6 +65,14 @@ module.exports = {
   getTopRatedMovies: async () => {
     try {
       const data = await db.getTopRatedMovies();
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getMovieDetails: async (id) => {
+    try {
+      const data = await db.getMovieDetails(id);
       return data;
     } catch (error) {
       throw error;

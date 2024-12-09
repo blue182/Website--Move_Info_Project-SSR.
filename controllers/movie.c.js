@@ -13,7 +13,7 @@ function groupMoviesByIndex(movies, chunkSize = 3) {
     }
     const group = {
       length: chunkSize,
-      index: groupedMovies.length, // Use the current group number as index
+      index: groupedMovies.length,
       movie: movies.slice(i, i + chunkSize),
     };
     groupedMovies.push(group);
@@ -21,6 +21,15 @@ function groupMoviesByIndex(movies, chunkSize = 3) {
 
   return groupedMovies;
 }
+const parseNamesToString = (list) => {
+  if (list && Array.isArray(list)) {
+    return list
+      .map((item) => item.name)
+      .filter((name) => name)
+      .join(", ");
+  }
+  return "";
+};
 
 module.exports = {
   getHome: async (req, res, next) => {
@@ -33,7 +42,6 @@ module.exports = {
       }));
 
       const topGrossingMovies = await movieM.getTopGrossingMovies();
-      //   console.log("TOP GROSSING MOVIES: ", topGrossingMovies);
       const groupedMovies = groupMoviesByIndex(topGrossingMovies);
       const data1 = {
         groupedMovies: groupedMovies,
@@ -69,6 +77,42 @@ module.exports = {
 
       const html = templateEngine.parseTemplate(layout, {}, partials);
 
+      res.send(html);
+    } catch (error) {
+      return next(new MyError(500, error.message, error.stack));
+    }
+  },
+  getMovieDetails: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const movie = await movieM.getMovieDetails(id);
+      console.log("Movie: ", movie);
+
+      if (!movie) {
+        return next(
+          new MyError(404, "Movie Not Found", "The movie does not exist.")
+        );
+      }
+      const directorsString = parseNamesToString(movie.directors);
+      const writersString = parseNamesToString(movie.writers);
+      const actorsString = (movie.actors || [])
+        .filter((actor) => actor.name && actor.id)
+        .map((actor) => `<a href="/actor/${actor.id}">${actor.name}</a>`)
+        .join(", ");
+
+      console.log("Actors: ", actorsString);
+      const data = {
+        movie,
+        directorsString,
+        writersString,
+        actorsString,
+      };
+      const layout = templateEngine.loadTemplate("layouts/main.html");
+      const partials = {
+        Navbar: templateEngine.loadTemplate("partials/navbar.html"),
+        Content: templateEngine.loadTemplate("movieDetail.html"),
+      };
+      const html = templateEngine.parseTemplate(layout, data, partials);
       res.send(html);
     } catch (error) {
       return next(new MyError(500, error.message, error.stack));
