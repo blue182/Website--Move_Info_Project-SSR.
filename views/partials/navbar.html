@@ -1,0 +1,37 @@
+<nav class="navbar navbar-expand-lg navbar-light rounded" style="background-color: #67abfe80; border: 1px solid blue">
+  <div class="container-fluid">
+    <div class="d-flex w-100 justify-content-between align-items-center">
+      <!-- Navbar Brand (Home icon) -->
+      <a class="navbar-brand" style="border: none; background: transparent; cursor: pointer" href="/">
+        <i class="bi bi-house-fill" style="font-size: 1.7rem !important"></i>
+      </a>
+
+      <!-- Title Section (Center) -->
+      <a class="d-flex justify-content-center" style="flex-grow: 1; color: rgb(255, 255, 255);" href="/favorite-movies">
+        <h3>&lt;22393&gt;</h3>
+      </a>
+
+      <!-- Navbar Toggler (Mobile) -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+        aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Collapsible Navbar Content (Search Form) -->
+      <div class="collapse navbar-collapse" style="width: auto; height: auto" id="navbarContent">
+        <div class="d-flex justify-content-end ms-auto">
+          <form class="d-flex" method="POST" action="/search">
+            <input id="searchQuery" name="keyword" class="form-control me-2" type="search" placeholder="Search"
+              required />
+            <button class="btn btn-outline-success me-2 text-nowrap" type="submit" name="searchType" value="title">
+              Search by Title
+            </button>
+            <button class="btn btn-outline-success text-nowrap" type="submit" name="searchType" value="actor">
+              Search by Actor
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

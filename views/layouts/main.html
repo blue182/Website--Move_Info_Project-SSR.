@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Info</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.min.js"></script>
+
+  <style>
+    a {
+      text-decoration: none;
+    }
+
+    /* ======== HEADER & FOOTER ========== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: 100vh;
+    }
+
+    .light-mode {
+      background-color: white;
+      color: rgb(44, 10, 10);
+    }
+
+    .dark-mode {
+      background-color: #101112df;
+      color: rgba(245, 188, 188, 0.83);
+    }
+
+    .header {
+      background-color: #f94a5842;
+      padding: 10px;
+      border: 1px solid #dc3545;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 5px;
+    }
+
+    .footer {
+      width: 100%;
+      background-color: #f94a5842;
+      text-align: center;
+      padding: 10px;
+      border: 1px solid #dc3545;
+      border-radius: 5px;
+    }
+
+    .footer.dark-mode {
+      color: #f8f9fa;
+    }
+
+    .mode-toggle-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: auto;
+      gap: 10px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    .mode-toggle {
+      position: relative;
+      width: 40px;
+      height: 15px;
+      border-radius: 25px;
+      transition: background-color 0.3s ease;
+    }
+
+    .mode-toggle .switch {
+      position: absolute;
+      top: 2px;
+      left: 20px;
+      width: 10px;
+      height: 10px;
+      background-color: rgb(154, 141, 141);
+      border-radius: 50%;
+      transition: left 0.3s ease;
+    }
+
+    .mode-toggle.switch-light {
+      background-color: white;
+    }
+
+    .mode-toggle.switch-light .switch {
+      left: 3px;
+    }
+
+    .mode-toggle.switch-dark {
+      background-color: #3582df;
+      border: 1px solid blue;
+      box-shadow: 0 0 5px #007bff;
+    }
+
+    .mode-toggle.switch-dark .switch {
+      background-color: white;
+      left: 28px;
+    }
+
+    .mode-toggle-container i {
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+
+    /* ======== END HEADER & FOOTER ========== */
+    /* ====== NAVBAR ======== */
+    .dark-mode i {
+      color: rgba(255, 255, 255, 0.83);
+    }
+
+    .dark-mode input {
+      background-color: #10111292;
+      color: #f8f9fa;
+    }
+
+    .dark-mode input.form-control:focus {
+      background-color: #504848 !important;
+      border: 1px solid #007bff;
+      outline: none;
+      color: #f8f9fa;
+    }
+
+    .dark-mode input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .dark-mode .btn-outline-success {
+      border-color: #30d657;
+      color: #2ee759;
+    }
+
+    .dark-mode .btn-outline-success:hover {
+      border-color: #1e7e34;
+    }
+
+    .navbar-brand {
+      transition: transform 0.3s ease;
+    }
+
+    .navbar-brand:hover {
+      transform: scale(1.2);
+    }
+
+    /* ====== END NAVBAR ======== */
+    /* ========== COMPONENT SLIDE =========== */
+    .largeSlide {
+      transition: transform 0.3s ease;
+    }
+
+    .largeSlide:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 0px 30px rgba(43, 188, 240, 0.5);
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+      background-color: rgba(0, 0, 0, 0.5);
+      background-size: 100%, 100%;
+      border-radius: 50%;
+      padding: 10px;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+      width: 10%;
+    }
+
+    .carousel-control-prev {
+      left: -90%;
+    }
+
+    .carousel-control-next {
+      right: -90%;
+    }
+
+    .carousel-inner .inner-image {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 2/3;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .carousel-inner .inner-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .carousel-indicators {
+      bottom: -20px;
+    }
+
+    /* ======================= */
+
+    .carousel-inner .row {
+      overflow: visible;
+      position: relative;
+    }
+
+    .box-movie {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .carousel-inner .container-image {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+
+    .carousel-inner .container-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+    }
+
+    .slideSmall.carousel-control-prev {
+      left: -7%;
+    }
+
+    .slideSmall.carousel-control-next {
+      right: -7%;
+    }
+
+    .box-movie:hover {
+      border: 1px solid #5ff04f;
+      transform: scale(1.2);
+      z-index: 9999;
+      border-radius: 5px 5px 0 0;
+      box-shadow: 0px 0px 20px rgba(183, 251, 58, 0.679);
+    }
+
+    .box-movie .info-movie {
+      position: absolute;
+      bottom: -15%;
+      /* Gắn phần info-movie ở cuối ảnh */
+      left: -2px;
+      width: 101%;
+      text-align: center;
+      color: white;
+      opacity: 0;
+      padding: 10px;
+      transition: opacity 0.3s ease-in-out;
+      font-size: 0.7rem;
+      z-index: 9999;
+      border-radius: 0 0 5px 5px;
+      background-color: rgba(0, 0, 0, 0.99);
+    }
+
+    .box-movie .info-movie .title-movie {
+      color: rgb(211, 149, 50);
+      font-size: 1rem;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .box-movie:hover .info-movie {
+      opacity: 1;
+      border-bottom: 2px solid #5ff04f;
+      border-left: 2px solid #5ff04f;
+      border-right: 2px solid #5ff04f;
+    }
+
+    .carousel-item {
+      transition: transform 1s ease-in-out, opacity 1s ease-in-out;
+    }
+
+    /* ========== END COMPONENT SLIDE =========== */
+    /* =========== LIST MOVIE SEARCH ============= */
+    .movie-card {
+      border: 2px solid #b2a4a4;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .poster-wrapper {
+      width: 100%;
+      aspect-ratio: 3/4;
+    }
+
+    .movie-poster {
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+    }
+
+    .movie-info {
+      padding: 20px;
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .movie-info .movie-title {
+      width: 100%;
+      text-align: center;
+    }
+
+    .movie-info p {
+      margin-bottom: 5px;
+    }
+
+    .movie-card {
+      transition: transform 0.3s ease;
+      transform: scale(1);
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .movie-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0px 20px rgba(239, 150, 25, 0.567);
+    }
+
+    /* =========== END LIST MOVIE SEARCH ============= */
+    .table td,
+    .table th {
+      text-align: center;
+      vertical-align: middle;
+
+    }
+
+    .table img {
+      display: block;
+      margin: 0 auto;
+      width: 100px;
+      height: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div id="themeWrapper" class="light-mode">
+      <div class="container">
+        <!-- Header -->
+        <div class="row py-2">
+          <div class="col-12 p-0">
+            <div class="header d-flex justify-content-between align-items-center p-3 border border-danger rounded">
+              <div>&lt;22120393&gt;</div>
+              <h2 class="m-0">Movie Information</h2>
+              <div class="d-flex align-items-center">
+                <div class="mode-toggle-container">
+                  <div class="mode-toggle switch-light">
+                    <div class="switch"></div>
+                  </div>
+                  <i id="modeIcon" class="bi bi-sun-fill" style="font-size: 1.5rem"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navbar -->
+        <div class="row">
+          <div class="col-12 p-0">22393{+ Navbar}</div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="row">
+          <div class="col-12 p-0">22393{+ Content}</div>
+        </div>
+
+        <!-- Footer -->
+        <div class="row my-2 py-2">
+          <div class="col-12 p-0">
+            <div class="footer text-secondary font-italic py-2 rounded">
+              Copy right &copy; &lt;22120393 - Nguyen Le Thanh Truc&gt;
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script for Dark Mode -->
+  <script>
+    $(document).ready(function () {
+      const savedTheme = localStorage.getItem("theme") || "light";
+      $("#themeWrapper").addClass(savedTheme);
+      if (savedTheme === "dark") {
+        console.log("dark");
+        $("#themeWrapper").removeClass("light-mode").addClass("dark-mode");
+        $(".mode-toggle").removeClass("switch-light").addClass("switch-dark");
+        $("#modeIcon").removeClass("bi-sun-fill").addClass("bi-moon-fill");
+        $(".footer").addClass("dark-mode");
+      }
+
+      const changeTheme = (currentTheme) => {
+        if (currentTheme === "light") {
+          $("#themeWrapper").removeClass("light-mode").addClass("dark-mode");
+          $(".mode-toggle")
+            .removeClass("switch-light")
+            .addClass("switch-dark");
+          $("#modeIcon").removeClass("bi-sun-fill").addClass("bi-moon-fill");
+          $(".footer").addClass("dark-mode");
+          localStorage.setItem("theme", "dark");
+        } else {
+          $("#themeWrapper").removeClass("dark-mode").addClass("light-mode");
+          $(".mode-toggle")
+            .removeClass("switch-dark")
+            .addClass("switch-light");
+          $("#modeIcon").removeClass("bi-moon-fill").addClass("bi-sun-fill");
+
+          $(".footer").removeClass("dark-mode");
+          localStorage.setItem("theme", "light");
+        }
+      };
+
+      $(".mode-toggle").on("click", function () {
+        const currentTheme = $("#themeWrapper").hasClass("dark-mode")
+          ? "dark"
+          : "light";
+        changeTheme(currentTheme);
+      });
+      $("#modeIcon").on("click", function () {
+        const currentTheme = $("#themeWrapper").hasClass("dark-mode")
+          ? "dark"
+          : "light";
+        changeTheme(currentTheme);
+      });
+    });
+  </script>
+</body>
+
+</html>

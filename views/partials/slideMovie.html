@@ -1,0 +1,83 @@
+<div id="22393{uniqueId}" class="carousel slide" data-bs-ride="carousel" style="overflow: visible; position: relative">
+  <!-- Wrapper for slides -->
+  <div class="carousel-inner" style="overflow: visible; position: relative">
+    22393{for group in groupedMovies}
+    <div key="slide-22393{if group.index === 0}0{else}22393{group.index}{/if}"
+      class="carousel-item 22393{if group.index === 0}active{else}{/if}">
+      <div class="row">
+        <a key="22393{group.movie[0].movie_id}" class="col-4 col-md-4 col-lg-4 h-100"
+          href="/movie/22393{group.movie[0].movie_id}">
+          <div class="box-movie">
+            <div class="container-image">
+              <img src="22393{group.movie[0].movie_image}" class="d-block w-100"
+                alt="22393{group.movie[0].movie_title}" />
+            </div>
+            <div class="info-movie">
+              <div class="text-center title-movie">
+                22393{group.movie[0].movie_title}
+              </div>
+            </div>
+          </div>
+
+        </a>
+        22393{if group.length === 2}
+        <a key="22393{group.movie[1].movie_id}" class="col-4 col-md-4 col-lg-4 h-100"
+          href="/movie/22393{group.movie[1].movie_id}">
+          <div class="box-movie">
+            <div class="container-image">
+              <img src="22393{group.movie[1].movie_image}" class="d-block w-100"
+                alt="22393{group.movie[1].movie_title}" />
+            </div>
+            <div class="info-movie">
+              <div class="text-center title-movie">
+                22393{group.movie[1].movie_title}
+              </div>
+            </div>
+          </div>
+        </a>
+        {else}{/if} 22393{if group.length === 3}
+        <a key="22393{group.movie[1].movie_id}" class="col-4 col-md-4 col-lg-4 h-100"
+          href="/movie/22393{group.movie[1].movie_id}">
+          <div class="box-movie">
+            <div class="container-image">
+              <img src="22393{group.movie[1].movie_image}" class="d-block w-100"
+                alt="22393{group.movie[1].movie_title}" />
+            </div>
+            <div class="info-movie">
+              <div class="text-center title-movie">
+                22393{group.movie[1].movie_title}
+              </div>
+            </div>
+          </div>
+        </a>
+        <a key="22393{group.movie[2].id}" class="col-4 col-md-4 col-lg-4 h-100"
+          href="/movie/22393{group.movie[2].movie_id}">
+          <div class="box-movie">
+            <div class="container-image">
+              <img src="22393{group.movie[2].movie_image}" class="d-block w-100"
+                alt="22393{group.movie[2].movie_title}" />
+            </div>
+            <div class="info-movie">
+              <div class="text-center title-movie">
+                22393{group.movie[2].movie_title}
+              </div>
+            </div>
+          </div>
+        </a>
+        {else}{/if}
+      </div>
+    </div>
+    {/for}
+  </div>
+
+
+  <!-- Controls -->
+  <button class="slideSmall carousel-control-prev" type="button" data-bs-target="#22393{uniqueId}" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="slideSmall carousel-control-next" type="button" data-bs-target="#22393{uniqueId}" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
