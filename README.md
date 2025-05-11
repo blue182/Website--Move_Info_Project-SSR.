@@ -43,14 +43,23 @@
    - Truy cập ứng dụng tại `http://localhost:22393`.
 
 ## Cấu Trúc Dự Án
+
 ├── node_modules/ # Các thư viện phụ thuộc
+
 ├── public/ # Thư mục chứa tài nguyên tĩnh (CSS, JS, hình ảnh)
+
 ├── views/ # Template của ứng dụng (MVC View)
+
 ├── controllers/ # Các controller xử lý logic của ứng dụng
+
 ├── models/ # Các mô hình (Model) tương tác với cơ sở dữ liệu
+
 ├── .env # Cấu hình môi trường
+
 ├── .gitignore # Các tệp không theo dõi trong Git
+
 ├── package.json # Quản lý dependencies và script của ứng dụng
+
 └── README.md # Tài liệu mô tả dự án
 
 
